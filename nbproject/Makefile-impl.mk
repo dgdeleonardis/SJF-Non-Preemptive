@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=SJF (Non-Preemptive)
+PROJECTNAME=SJF-Non-Preemptive
 
 # Active Configuration
 DEFAULTCONF=Debug

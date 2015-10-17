@@ -1,5 +1,8 @@
 struct s_elemento{ //definizione elemento della lista
     int value;
+    int returnTime;
+    int waitTime;
+    int remaingTime;
     struct s_elemento *next;
 };
 

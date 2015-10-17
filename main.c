@@ -5,7 +5,7 @@
 
 
 int main(int argc, char** argv) {
-    int flag, ordine, i = 0;
+    int flag, ordine = 1, i = 0;
     int ExecuteTime;
     float tempoMedio;
     elemento *primo = NULL, *scorri;
@@ -24,7 +24,6 @@ int main(int argc, char** argv) {
         scanf("%d", &flag);
     }while(flag!=0);
     
-    primo = bubbleSort(primo, i);
     
     tempoMedio=calcolaTempo(primo, i);//Calcolo del tempo d'attesa tramite funzione apposita
     
