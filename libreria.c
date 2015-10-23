@@ -8,20 +8,24 @@ elemento* aggiungiTesta(elemento* first, int value){
     if(temp == NULL) {
         exit(1);
     }
-    temp->value=value;
+    temp->executeTime=value;
     temp->next = first;
     first = temp;
     return first;
 }
 
-elemento* aggiungiCoda(elemento* first, int value){
+elemento* aggiungiCoda(elemento* first, int value, int arrival){
     elemento* scorri=first;
     elemento* temp;
     temp = (elemento*) malloc(sizeof(elemento));
     if(temp == NULL) {
         exit(1);
     }
-    temp->value=value;
+    temp->executeTime = value;
+    temp->remaingTime = value;
+    temp->arrivalTime = arrival;
+    temp->waitTime = 0;
+    temp->returnTime = 0;
     if (first!=NULL){
         while(scorri->next!=NULL){
             scorri=scorri->next;
@@ -40,7 +44,7 @@ float calcolaTempo(elemento* first, int numeroProcessi){
     float tempo=0;
     
     while(scorri->next!=NULL){
-        accExecuteTime+=scorri->value;
+        accExecuteTime+=scorri->executeTime;
         acc+=accExecuteTime;
         scorri=scorri->next;
     }
@@ -66,14 +70,78 @@ elemento* bubbleSort(elemento* first, int i) {
         pj = first;
         while(pj->next != NULL) {
            pk = pj->next;
-            if((pj->value) > (pk->value)) {
-                value = pj->value;
-                pj->value = pk->value;
-                pk->value = value;
+            if((pj->executeTime) > (pk->executeTime)) {
+                value = pj->executeTime;
+                pj->executeTime = pk->executeTime;
+                pk->executeTime = value;
             }
             pj = pj->next;
          }
         i--;
     }
     return first;
+}
+
+elemento* simulazioneEsecuzione(elemento* first) {
+    int slice = 0, completamento;
+    elemento* scorri, *min;
+    scorri = first;
+    min = scorri;
+    slice++;
+    min->remaingTime--;
+    min->returnTime = slice;
+    scorri = scorri->next;
+    completamento = verificaCompletamento(first);
+
+    while (!completamento) {
+        if(min->remaingTime == 0) 
+            min = assegnazioneMin(first);
+        scorri = first;
+        while(scorri != NULL) {
+            if(scorri->arrivalTime <= slice) {
+                if (((scorri->remaingTime) < (min->remaingTime)) && scorri->remaingTime > 0)
+                    min = scorri;
+                }
+            scorri = scorri->next;
+        }
+        slice++;
+        min->remaingTime--;
+        min->returnTime = slice;
+        completamento = verificaCompletamento(first);
+    }
+
+    first = calcolaAttesa(first);
+    return first;
+}
+
+int verificaCompletamento(elemento *first) {
+    int completamento = 1;
+    elemento *scorri;
+    scorri = first;
+    while(scorri != NULL) {
+        if(scorri->remaingTime == 0)
+            completamento = completamento * 1;
+        else
+            completamento = completamento * 0;
+        scorri = scorri->next;
+    }
+    return completamento;
+}
+
+elemento *calcolaAttesa(elemento *first) {
+    elemento *scorri;
+    scorri = first;
+    while(scorri != NULL) {
+        scorri->waitTime = (scorri->returnTime - scorri->executeTime) - scorri->arrivalTime;
+        scorri = scorri->next;
+    }
+    return first;
+}
+
+elemento* assegnazioneMin(elemento *first) {
+    elemento *min;
+    min = first;
+    while(min->remaingTime == 0)
+        min = min->next;
+    return min;
 }

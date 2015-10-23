@@ -5,29 +5,27 @@
 
 
 int main(int argc, char** argv) {
-    int flag, ordine = 1, i = 0;
+    int flag, i = 0;
     int ExecuteTime;
     float tempoMedio;
     elemento *primo = NULL, *scorri;
     
     do{
-        i++;
+        
         printf("Inserisci il tempo d'esecuzione del processo n.%d :", i);
         scanf("%d", &ExecuteTime);
-        if (ordine==0){//Se Ã¨ 1 ogni elemento verrÃ  aggiunto in coda. Se Ã¨ 0 ogni elemento verrÃ  salvato in testa
-            primo=aggiungiTesta(primo, ExecuteTime);
-        }
-        else{
-            primo=aggiungiCoda(primo, ExecuteTime);
-        }
+        primo=aggiungiCoda(primo, ExecuteTime, i);
         printf("Vuoi inserire un nuovo processo (1|0) : ");;//Conferma dell'utente nel caso voglia inserire un altro processo
         scanf("%d", &flag);
+        i++;
     }while(flag!=0);
     
-    
-    tempoMedio=calcolaTempo(primo, i);//Calcolo del tempo d'attesa tramite funzione apposita
-    
-    printf("Tempo di attesa medio: %5.2f\n", tempoMedio);
+    primo = simulazioneEsecuzione(primo);
+    scorri = primo;
+    while(scorri != NULL) {
+        printf("Tempo d'attesa del processo %d : %d\n", scorri->arrivalTime, scorri->waitTime);
+        scorri = scorri->next;
+    }
     
     return (EXIT_SUCCESS);
 }
