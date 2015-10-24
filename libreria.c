@@ -2,18 +2,6 @@
 #include <stdlib.h>
 #include "libreria.h"
 
-elemento* aggiungiTesta(elemento* first, int value){
-    elemento* temp;
-    temp = (elemento*) malloc(sizeof(elemento));
-    if(temp == NULL) {
-        exit(1);
-    }
-    temp->executeTime=value;
-    temp->next = first;
-    first = temp;
-    return first;
-}
-
 elemento* aggiungiCoda(elemento* first, int value, int arrival){
     elemento* scorri=first;
     elemento* temp;
@@ -38,50 +26,6 @@ elemento* aggiungiCoda(elemento* first, int value, int arrival){
     return first;
 }
 
-float calcolaTempo(elemento* first, int numeroProcessi){
-    elemento* scorri=first;
-    float acc,accExecuteTime=0;
-    float tempo=0;
-    
-    while(scorri->next!=NULL){
-        accExecuteTime+=scorri->executeTime;
-        acc+=accExecuteTime;
-        scorri=scorri->next;
-    }
-    tempo=acc/numeroProcessi;
-    return tempo;
-}
-
-void svuotaLista (elemento* first){
-    elemento* temp;
-    printf("Svuotamento lista in corso...\n");
-    while(first!=NULL){
-        temp=first->next;
-        free(first);
-        first=temp;
-    }
-    printf("Completato.");
-}
-
-elemento* bubbleSort(elemento* first, int i) {
-    elemento* pj, *pk;
-    int value;
-    while(i-1) {
-        pj = first;
-        while(pj->next != NULL) {
-           pk = pj->next;
-            if((pj->executeTime) > (pk->executeTime)) {
-                value = pj->executeTime;
-                pj->executeTime = pk->executeTime;
-                pk->executeTime = value;
-            }
-            pj = pj->next;
-         }
-        i--;
-    }
-    return first;
-}
-
 elemento* simulazioneEsecuzione(elemento* first) {
     int slice = 0, completamento;
     elemento* scorri, *min;
@@ -94,12 +38,12 @@ elemento* simulazioneEsecuzione(elemento* first) {
     completamento = verificaCompletamento(first);
 
     while (!completamento) {
-        if(min->remaingTime == 0) 
-            min = assegnazioneMin(first);
+        if(min->remaingTime == 0)
+            min->returnTime = slice;      
         scorri = first;
         while(scorri != NULL) {
             if(scorri->arrivalTime <= slice) {
-                if (((scorri->remaingTime) < (min->remaingTime)) && scorri->remaingTime > 0)
+                if ((((scorri->remaingTime) < (min->remaingTime)) && scorri->remaingTime > 0) || min->remaingTime == 0)
                     min = scorri;
                 }
             scorri = scorri->next;
@@ -138,10 +82,24 @@ elemento *calcolaAttesa(elemento *first) {
     return first;
 }
 
-elemento* assegnazioneMin(elemento *first) {
-    elemento *min;
-    min = first;
-    while(min->remaingTime == 0)
-        min = min->next;
-    return min;
+float calcolaMedia(elemento *first, int numProcessi) {
+    float tempoMedio = 0;
+    elemento *scorri = first;
+    while(scorri != NULL) {
+        tempoMedio+= scorri->waitTime;
+        scorri = scorri->next;
+    }
+    tempoMedio = tempoMedio / numProcessi;
+    return tempoMedio;
+}
+
+void svuotaLista (elemento* first){
+    elemento* temp;
+    printf("Svuotamento lista in corso...\n");
+    while(first!=NULL){
+        temp=first->next;
+        free(first);
+        first=temp;
+    }
+    printf("Completato.");
 }
